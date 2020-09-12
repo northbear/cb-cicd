@@ -1,0 +1,9 @@
+pipeline {
+    agent any
+    stages {
+        stage('Pull Server Image')  {}
+        stage('Build Client Image') {}
+        stage('Run Server Image')   {}
+        stage('Run Client Image')   {}
+    }
+}
