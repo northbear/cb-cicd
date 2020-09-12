@@ -1,0 +1,9 @@
+pipelines {
+    agent any
+    stages {
+        stage "Prepare Workspace" {}
+        stage "Build Image" {}
+        stage "Run And Verify" {}
+        stage "Publish Image" {}
+    }
+}
