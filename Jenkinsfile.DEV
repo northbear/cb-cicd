@@ -2,16 +2,24 @@ pipeline {
     agent any
     stages {
         stage("Prepare Workspace") {
-            steps {}
+            steps {
+	    	  echo 'Prepare'
+	    }
         }
         stage("Build Image")    {
-            steps {}
+            steps {
+	          echo 'Build'
+	    }
         }
         stage("Run And Verify") {
-            steps {}
+            steps {
+	    	  echo 'Test'
+	    }
         }
         stage("Publish Image")  {
-            steps {}
+            steps {
+	    	  echo 'Push image to Repo'
+	    }
         }
     }
 }
