@@ -1,25 +1,44 @@
 pipeline {
     agent any
+    environment {
+        registry = "northbear/server-image"
+        registryCredential = 'cb-access-dockerhub'
+        dockerImage = ''
+        dockerImageName = 'morse-responder'
+    }
     stages {
         stage("Prepare Workspace") {
             steps {
-	    	  echo 'Prepare'
+	    	echo 'Prepare'
+                git 'https://github.com/northbear/cb-ms-morse.git'
 	    }
         }
         stage("Build Image")    {
             steps {
-	          echo 'Build'
+	        echo 'Build'
+                dockerImage = docker.build(dockerImageName, 'morse-responder/.')
+                
 	    }
         }
         stage("Run And Verify") {
             steps {
-	    	  echo 'Test'
+	    	echo 'Test'
 	    }
-        }
+        } 
         stage("Publish Image")  {
             steps {
-	    	  echo 'Push image to Repo'
+	    	echo 'Push image to Repo'
+                docker.withRegistry( '', registryCredential ) {
+                    dockerImage.push(":${env.BUILD_ID}")
+                }
+	    }
+        }
+        stage("Clean Up")  {
+            steps {
+	    	echo 'Remove containers'
+                // sh 'docker rmi ${dockerImageName}'
 	    }
         }
     }
 }
+
