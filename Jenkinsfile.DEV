@@ -7,7 +7,7 @@ pipeline {
         registry = "northbear/server-image"
         registryCredential = 'cb-access-dockerhub'
         dockerImage = ''
-        dockerImageName = 'morse-responder'
+        dockerImageName = 'northbear/morse-responder'
     }
     stages {
         stage("Prepare Workspace") {
