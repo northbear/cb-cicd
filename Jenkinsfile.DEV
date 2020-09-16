@@ -20,7 +20,7 @@ pipeline {
             steps {
 	        echo 'Build'
                 script {
-                    dockerImage = docker.build(dockerImageName, '-f Dockerfile.morse-responder morse-responder/.')
+                    dockerImage = docker.build(dockerImageName, '-f Dockerfile.morse-responder morse-responder')
                 }
 	    }
         }
