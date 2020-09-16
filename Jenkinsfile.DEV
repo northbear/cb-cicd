@@ -3,30 +3,37 @@ pipeline {
     triggers {
         pollSCM('H/2 * * * 1-5')
     }
+    options {
+        disableConcurrentBuilds()
+        timestamps()
+    }
     environment {
         registry = "northbear/server-image"
         registryCredential = 'cb-access-dockerhub'
-        dockerImage = ''
-        dockerImageName = 'northbear/morse-responder'
+        serverImageName = 'northbear/morse-responder'
+        serverImage = ''
+        serverHost = 'ec2-54-73-110-196.eu-west-1.compute.amazonaws.com'
+        serverPortExposed = '4000'
     }
     stages {
         stage("Prepare Workspace") {
             steps {
 	    	echo 'Prepare'
-                git 'https://github.com/northbear/cb-ms-morse.git'
+                git url: 'https://github.com/northbear/cb-ms-morse.git', poll: true
 	    }
         }
         stage("Build Image")    {
             steps {
 	        echo 'Build'
                 script {
-                    dockerImage = docker.build(dockerImageName, '-f Dockerfile.morse-responder .')
+                    dockerImage = docker.build(serverImageName, '--rm -f Dockerfile.morse-responder .')
                 }
 	    }
         }
         stage("Run And Verify") {
             steps {
 	    	echo 'Test'
+                
 	    }
         } 
         stage("Publish Image")  {
@@ -47,4 +54,3 @@ pipeline {
         }
     }
 }
-
