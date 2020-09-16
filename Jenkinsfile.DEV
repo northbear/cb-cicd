@@ -19,8 +19,9 @@ pipeline {
         stage("Build Image")    {
             steps {
 	        echo 'Build'
-                dockerImage = docker.build(dockerImageName, 'morse-responder/.')
-                
+                script {
+                    dockerImage = docker.build(dockerImageName, 'morse-responder/.')
+                }
 	    }
         }
         stage("Run And Verify") {
@@ -31,8 +32,10 @@ pipeline {
         stage("Publish Image")  {
             steps {
 	    	echo 'Push image to Repo'
-                docker.withRegistry( '', registryCredential ) {
-                    dockerImage.push(":${env.BUILD_ID}")
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push(":${env.BUILD_ID}")
+                    }
                 }
 	    }
         }
