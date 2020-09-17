@@ -35,6 +35,7 @@ pipeline {
             steps {
 	    	echo 'Prepare'
                 git url: 'https://github.com/northbear/cb-ms-morse.git', poll: true
+                sh "mkdir -p ./output"
 	    }
         }
         stage('Prepare Server Image') {
@@ -49,15 +50,34 @@ pipeline {
         }
         stage("Build Receiver Image")    {
             steps {
-	        echo 'Build'
+	        echo "Build Image ${clientImageName}"
                 script {
                     dockerImage = docker.build(clientImageName, '--rm -f Dockerfile.morse-receiver .')
                 }
 	    }
         }
-        stage("Run And Verify") {
+        stage("Run Server Container") {
+            agent {
+                docker {
+                    image 'northbear/morse-responder'
+                    args "-p ${serverPortExposed}:2000 --env APP_PORT=2000"
+                }
+            }
             steps {
-	    	echo 'Test'                
+	    	echo 'Run Server Container'
+                sh "./morse-responder"
+	    }
+        } 
+        stage("Run Client Container") {
+            agent {
+                docker {
+                    image 'northbear/morse-receiver'
+                    args '-v ./output:/output'
+                }
+            }
+            steps {
+	    	echo 'Run client'
+                sh "SERVICE_ADDRESS=${serverHost}:${serverPortExposed} ./morse-receiver &>> /output/morse-receiver.log"
 	    }
         } 
         stage("Publish Image")  {
