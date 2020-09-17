@@ -41,7 +41,9 @@ pipeline {
         stage("Build Client Container") {            
             steps {
 	    	echo 'Build Client Container'
-                clientImage = docker.build(clientImageName, '-t Dockerfile.morse-receiver .')
+                script {
+                    clientImage = docker.build(clientImageName, '-t Dockerfile.morse-receiver .')
+                }
 	    }
         } 
         stage('Get Server Container') {
