@@ -38,7 +38,8 @@ pipeline {
                     serverImage.withRun("--name ${serverContainerName} -p ${serverPortExposed}:5000 --env APP_PORT=5000") {
                         sh 'ls -l'
                         sh 'pwd'
-                        sh "curl http://${serverHost}:${serverPortExposed}/"
+                        // sh "curl http://${serverHost}:${serverPortExposed}/"
+                        sh "curl http://${serverHost}:5000/"
                         // sh './morse-responder'
                     }
                 }
