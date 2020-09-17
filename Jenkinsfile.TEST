@@ -2,15 +2,15 @@ pipeline {
     agent any
     triggers {
         pollSCM('H/2 * * * 1-5')
-        properties([
-            pipelineTriggers([[
-                $class: 'DockerHubTrigger',
-                options: [[
-                    $class: 'TriggerOnSpecifiedImageNames',
-                    repoNames: ['northbear/morse-responder'].toSet()
-                ]]
-            ]])
-        ])
+        // properties([
+        //     pipelineTriggers([[
+        //         $class: 'DockerHubTrigger',
+        //         options: [[
+        //             $class: 'TriggerOnSpecifiedImageNames',
+        //             repoNames: ['northbear/morse-responder'].toSet()
+        //         ]]
+        //     ]])
+        // ])
 
     }
     options {
@@ -28,7 +28,7 @@ pipeline {
         
         clientImageName = 'northbear/morse-receiver'
         clientImage = null
-        serverContainerName = 'morse-receiver'
+        clientContainerName = 'morse-receiver'
     }
     stages {
         stage("Prepare Workspace") {
