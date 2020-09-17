@@ -36,7 +36,7 @@ pipeline {
 	    	echo 'Test'
                 script {
                     serverImage.withRun("--name ${serverContainerName} -p ${serverPortExposed}:5000 --env APP_PORT=5000") {
-                        sh 'ls -l'
+                        sh './morse-responder'
                     }
                 }
 	    }
@@ -54,7 +54,7 @@ pipeline {
         stage("Clean Up")  {
             steps {
 	    	echo 'Remove containers'
-                sh "docker stop ${serverContainerName} "
+                // sh "docker stop ${serverContainerName} "
                 // sh 'docker rmi ${dockerImageName}'
 	    }
         }
