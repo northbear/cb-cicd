@@ -35,7 +35,7 @@ pipeline {
             steps {
 	    	echo 'Prepare'
                 git url: 'https://github.com/northbear/cb-ms-morse.git', poll: true
-                sh "mkdir -p ./output"
+                sh "docker volume create receiver-output"
 	    }
         }
         stage("Build Client Container") {            
@@ -59,7 +59,7 @@ pipeline {
                 script {
                     serverImage.withRun("-p ${serverPort}:3000 --env APP_PORT=3000") {
                         sh "echo 'execute servercontainer'"
-                        clientImage.withRun("-v ./output:/output --env SERVICE_ADDRESS=${serverHost}:${serverPort}") {
+                        clientImage.withRun("-v receiver-output:/output --env SERVICE_ADDRESS=${serverHost}:${serverPort}") {
                             sh "echo 'execute client container'"
                         }
                     }
@@ -76,6 +76,7 @@ pipeline {
         stage("Clean Up")  {
             steps {
 	    	echo 'Remove containers'
+                sh "docker volume rm -f receiver-output"
                 // sh "docker rm -f ${serverContainerName}"
                 // sh "docker rm -f ${clientContainerName}"
                 // sh "docker rmi ${serverImageName}'
