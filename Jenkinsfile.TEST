@@ -45,8 +45,10 @@ pipeline {
 	    }
         } 
         stage('Get Server Container') {
-            script {
-                serverImage = docker.image(serverImageName)
+            steps {
+                script {
+                    serverImage = docker.image(serverImageName)
+                }
             }
         }
         stage("Run Container Stack") {
