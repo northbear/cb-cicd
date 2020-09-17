@@ -69,8 +69,8 @@ pipeline {
         stage("Get Reponse From Server")  {
             steps {
 	    	echo 'Push image to Repo'
-                sh "ls -l output/"
-                sh "cat output/*"
+                // sh "ls -l output/"
+                // sh "cat output/*"
 	    }
         }
         stage("Clean Up")  {
