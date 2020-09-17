@@ -1,9 +1,78 @@
 pipeline {
     agent any
+    triggers {
+        pollSCM('H/2 * * * 1-5')
+        properties([
+            pipelineTriggers([[
+                $class: 'DockerHubTrigger',
+                options: [[
+                    $class: 'TriggerOnSpecifiedImageNames',
+                    repoNames: ['northbear/morse-responder'].toSet()
+                ]]
+            ]])
+        ])
+
+    }
+    options {
+        disableConcurrentBuilds()
+        timestamps()
+    }
+    environment {
+        registryCredential = 'cb-access-dockerhub'
+        serverHost = 'ec2-54-73-110-196.eu-west-1.compute.amazonaws.com'
+        serverPortExposed = '5000'
+
+        serverImage = ''
+        serverImageName = 'northbear/morse-responder'
+        serverContainerName = 'morse-responder'
+        
+        clientImageName = 'northbear/morse-receiver'
+        clientImage = null
+        serverContainerName = 'morse-receiver'
+    }
     stages {
-        stage('Pull Server Image')  {}
-        stage('Build Client Image') {}
-        stage('Run Server Image')   {}
-        stage('Run Client Image')   {}
+        stage("Prepare Workspace") {
+            steps {
+	    	echo 'Prepare'
+                git url: 'https://github.com/northbear/cb-ms-morse.git', poll: true
+	    }
+        }
+        stage('Prepare Server Image') {
+            steps {
+                echo "Prepare image ${serverImageName}"
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push("${env.BUILD_ID}")
+                    }
+                }
+            }
+        }
+        stage("Build Receiver Image")    {
+            steps {
+	        echo 'Build'
+                script {
+                    dockerImage = docker.build(clientImageName, '--rm -f Dockerfile.morse-receiver .')
+                }
+	    }
+        }
+        stage("Run And Verify") {
+            steps {
+	    	echo 'Test'                
+	    }
+        } 
+        stage("Publish Image")  {
+            steps {
+	    	echo 'Push image to Repo'
+	    }
+        }
+        stage("Clean Up")  {
+            steps {
+	    	echo 'Remove containers'
+                // sh "docker rm -f ${serverContainerName}"
+                // sh "docker rm -f ${clientContainerName}"
+                // sh "docker rmi ${serverImageName}'
+                // sh "docker rmi ${serverImageName}'
+	    }
+        }
     }
 }
