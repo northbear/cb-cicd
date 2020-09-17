@@ -38,24 +38,6 @@ pipeline {
                 sh "mkdir -p ./output"
 	    }
         }
-        stage('Prepare Server Image') {
-            steps {
-                echo "Prepare image ${serverImageName}"
-                script {
-                    docker.withRegistry( '', registryCredential ) {
-                        dockerImage.push("${env.BUILD_ID}")
-                    }
-                }
-            }
-        }
-        stage("Build Receiver Image")    {
-            steps {
-	        echo "Build Image ${clientImageName}"
-                script {
-                    dockerImage = docker.build(clientImageName, '--rm -f Dockerfile.morse-receiver .')
-                }
-	    }
-        }
         stage("Run Server Container") {
             agent {
                 docker {
