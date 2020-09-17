@@ -56,10 +56,12 @@ pipeline {
         stage("Run Container Stack") {
             steps {
 	    	echo 'Run Server Container'
-                serverImage.withRun("p ${serverPort}:3000 --env APP_PORT=3000") {
-                    sh "echo 'execute servercontainer'"
-                    clientImage.withRun("-v ./output:/output --env SERVICE_ADDRESS=${serverHost}:${serverPort}") {
-                        sh "echo 'execute client container'"
+                script {
+                    serverImage.withRun("p ${serverPort}:3000 --env APP_PORT=3000") {
+                        sh "echo 'execute servercontainer'"
+                        clientImage.withRun("-v ./output:/output --env SERVICE_ADDRESS=${serverHost}:${serverPort}") {
+                            sh "echo 'execute client container'"
+                        }
                     }
                 }
 	    }
