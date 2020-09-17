@@ -57,7 +57,7 @@ pipeline {
             steps {
 	    	echo 'Run Server Container'
                 script {
-                    serverImage.withRun("p ${serverPort}:3000 --env APP_PORT=3000") {
+                    serverImage.withRun("-p ${serverPort}:3000 --env APP_PORT=3000") {
                         sh "echo 'execute servercontainer'"
                         clientImage.withRun("-v ./output:/output --env SERVICE_ADDRESS=${serverHost}:${serverPort}") {
                             sh "echo 'execute client container'"
