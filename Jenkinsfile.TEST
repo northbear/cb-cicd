@@ -42,7 +42,7 @@ pipeline {
             steps {
 	    	echo 'Build Client Container'
                 script {
-                    clientImage = docker.build(clientImageName, '-t Dockerfile.morse-receiver .')
+                    clientImage = docker.build(clientImageName, '-f Dockerfile.morse-receiver .')
                 }
 	    }
         } 
